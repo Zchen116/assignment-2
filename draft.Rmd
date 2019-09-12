@@ -1,0 +1,39 @@
+---
+title: "Assignment 2"
+output: html_document
+---
+#Create a connection from RStudio to your MySQL instance
+```{r}
+library(RMySQL)
+library(dplyr)
+```
+```{r}
+connection <- dbConnect(MySQL(),
+                        user="root",
+                        password="123456",
+                        dbname="movie",
+                        host="localhost"
+                        )
+```
+#Store the data access query in a variable
+```{r}
+query <- "SELECT Movie_Name,
+                 min(Movie_Rating) as LowestRating,
+                 max(Movie_Rating) as HighestRating
+          FROM movie
+          GROUP BY Movie_Name
+          ORDER BY Movie_Name ASC;"
+```
+#Fetch data from your MySQL instance
+```{r}
+resultset <- dbGetQuery(connection, query)
+```
+#Display the records
+```{r}
+resultset
+```
+```{r}
+resultset2 <- resultset
+summary(resultset2)
+```
+
