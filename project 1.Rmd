@@ -1,0 +1,90 @@
+---
+title: "Untitled"
+output: html_document
+---
+#Load data
+```{r}
+library(stringr)
+```
+```{r}
+chess_data <- read.table(url("https://raw.githubusercontent.com/Zchen116/assignment-2/master/tournamentinfo.txt"), sep = ",")
+head(chess_data)
+```
+#Clean line dividers
+```{r}
+chess_data1 <- data.frame(str_replace_all(chess_data$V1,"-",""))
+head(chess_data1)
+```
+
+```{r}
+chess_data1 <- chess_data1[c(5:nrow(chess_data1)),]
+head(chess_data1)
+```
+#Extract ID
+```{r}
+id <- "\\d{1,2}(?=\\s\\|)"
+chess_id <- unlist(str_extract_all(unlist(chess_data1), id))
+```
+#Extract name
+```{r}
+name <- "([[:upper:]]+\\s){2,}"
+chess_names <- unlist(str_extract_all(unlist(chess_data1), name))
+str_trim(chess_names, side = "right")
+```
+#Extract State
+```{r}
+state <- "([[:upper:]]){2}\\s(?=\\|)"
+chess_states <- unlist(str_extract_all(unlist(chess_data1), state))
+str_trim(chess_states, side = "right")
+```
+#Extract Total Number of Points
+```{r}
+points <- "\\d\\.\\d"
+chess_point <- unlist(str_extract_all(unlist(chess_data1), points))
+chess_point
+```
+#Extract Player's Pre-Rating
+```{r}
+pre_rating <- "(?<!\\>\\s)(?<=\\s{1,2}|\\s\\:)(\\d{3,4}(?=\\s|P))"
+chess_pre_rating <- unlist(str_extract_all(unlist(chess_data1), pre_rating))
+chess_pre_rating <- str_trim(chess_pre_rating)
+chess_pre_rating
+```
+#Extract Average Pre Chess Rating of Opponents
+```{r}
+opponents <- "(\\d{1,}|[[:blank:]]{1})(?=\\|)"
+player_opponents <- unlist(str_extract_all(unlist(chess_data1), opponents))
+player_opponents[player_opponents==" "]  <- NA
+opponent1 <- as.numeric(player_opponents[seq(4, length(player_opponents), 10)])
+opponent1 <- as.numeric(opponent1[seq(1, length(opponent1), 2)])
+opponent2 <- as.numeric(player_opponents[seq(5, length(player_opponents), 10)])
+opponent2 <- as.numeric(opponent2[seq(1, length(opponent2), 2)])
+opponent3 <- as.numeric(player_opponents[seq(6, length(player_opponents), 10)])
+opponent3 <- as.numeric(opponent3[seq(1, length(opponent3), 2)])
+opponent4 <- as.numeric(player_opponents[seq(7, length(player_opponents), 10)])
+opponent4 <- as.numeric(opponent4[seq(1, length(opponent4), 2)])
+opponent5 <- as.numeric(player_opponents[seq(8, length(player_opponents), 10)])
+opponent5 <- as.numeric(opponent5[seq(1, length(opponent5), 2)])
+opponent6 <- as.numeric(player_opponents[seq(9, length(player_opponents), 10)])
+opponent6 <- as.numeric(opponent6[seq(1, length(opponent6), 2)])
+opponent7 <- as.numeric(player_opponents[seq(10, length(player_opponents), 10)])
+opponent7 <- as.numeric(opponent7[seq(1, length(opponent7), 2)])
+player_opponents <- matrix(c(opponent1, opponent2, opponent3, opponent4, opponent5, opponent6, opponent7),nrow = 64, ncol = 7)
+```
+```{r}
+chess_avg <- 0
+chess_table <- 0
+for (i in 1:(length(chess_id)))
+chess_avg[i] <- mean(as.numeric(chess_pre_rating[player_opponents[i,]]), na.rm = T)
+```
+#Creat a Data Frame with all informations
+```{r}
+ChessResults <- data.frame(chess_names, chess_states, chess_point, chess_pre_rating)
+head(ChessResults, 5)
+```
+#Write csv in R
+```{r}
+write.csv(ChessResults, file = "Porject_ChessResults.csv")
+```
+
+
