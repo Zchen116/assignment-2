@@ -1,0 +1,60 @@
+---
+title: "Untitled"
+output: html_document
+---
+#(1) Create a .CSV file (or optionally, a MySQL database!) that includes all of the information above. You're encouraged to use a "wide" structure similar to how the information appears above, so that you can practice tidying and transformations as described below.
+```{r}
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(ggplot2)
+```
+#(2) Read the information from your .CSV file into R, and use tidyr and dplyr as needed to tidy and transform your data.
+```{r}
+table <- read.csv("https://raw.githubusercontent.com/Zchen116/assignment-2/master/flights.csv", header = TRUE, stringsAsFactors = FALSE)
+```
+#Remove the blank row that contains NAs
+```{r}
+table <- table[!apply(is.na(table) | table == "", 1, all),] 
+table
+```
+#rename column
+```{r}
+names(table)[1] <- "Airline"
+names(table)[2] <- "Arrival_Status"
+table
+```
+#Fill in the missing values
+```{r}
+table$Airline[2] <- table$Airline[1]
+table$Airline[4] <- table$Airline[3]
+table
+```
+#Combine City and Flights in one data table
+```{r}
+airlines <- gather(table, "City", "Flights", 3:7)
+airlines
+```
+#Combine Arrival Status and Flights in one data table
+```{r}
+airlines_2 <- spread(airlines, Arrival_Status, Flights)
+airlines_2
+```
+#(3) Perform analysis to compare the arrival delays for the two airlines.
+```{r}
+Compare_City <- airlines_2 %>%
+  group_by(City, Airline) %>%
+  summarize(delay_ratio = sum(delayed) / (sum(delayed) + sum(`on time`)))
+Compare_City %>% spread(Airline, delay_ratio)
+```
+#From cities delay comparison, we see that ALASKA's delay ratio is smaller than AM WEST's in every city.
+```{r}
+Compare_airlines <- airlines_2 %>%
+  group_by(Airline) %>% 
+  summarize(total_delayed = sum(delayed), total_flights = sum(delayed) + sum(`on time`), delay_ratio = sum(delayed) / (sum(delayed) + sum(`on time`))) 
+Compare_airlines
+```
+#From airlines delay comparison on total flights and delay ratio, we see that AM WEST had more flights than ALASKA (about twice as more as ALASKA) with a smaller delay ratio.
+
+
+
