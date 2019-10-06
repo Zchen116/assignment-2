@@ -1,0 +1,56 @@
+---
+title: "Project dataset 2"
+output: html_document
+---
+```{r}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+```
+#Read the information from your .CSV file into R, and use tidyr and dplyr as needed to tidy and transform your data.
+```{r}
+dataset1 <- read.csv("https://raw.githubusercontent.com/Zchen116/assignment-2/master/unicef-u5mr.csv")
+head(dataset1)
+```
+#check the names from dataset 1
+```{r}
+names(dataset1)
+```
+#check data types from dataset 1
+```{r}
+sapply(dataset1,class)
+```
+#Gather columns of Year, Value, and Country name into a new pair of variables
+```{r}
+dataset1_tidy <- gather(dataset1, Year,Value,-CountryName)
+head(dataset1_tidy)
+```
+#Convert value to numeric
+```{r}
+dataset1_tidy$Year <- str_extract(dataset1_tidy$Year,"\\d+$")
+dataset1_tidy$Year <- as.numeric(dataset1_tidy$Year)
+```
+#Analysis data by ggplot graph
+```{r}
+dataset1_tidy %>%
+    group_by(Year)%>%
+    summarise(avg = mean(Value, na.rm = TRUE)) %>%
+    ggplot(aes(Year,avg))+geom_line()+theme_classic()+ggtitle("Under-Five Child Mortality Over The Years")
+```
+
+```{r}
+dataset1_tidy %>%
+    filter(Year == min(Year))%>%
+    arrange(Value)%>%
+    head()
+```
+
+```{r}
+dataset1_tidy %>%
+    filter(Year == min(Year))%>%
+    arrange(-Value)%>%
+    head()
+```
+
+#Conclusion: From the graph we can know that child mortality has ben decreased years by years. African countries has the highest child mortality and developed countries lowest child mortality even on 1950.
