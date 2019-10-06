@@ -1,0 +1,48 @@
+---
+title: "Untitled"
+output: html_document
+---
+```{r}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+  
+dataset3 <-"https://raw.githubusercontent.com/Zchen116/assignment-2/master/infant_mortality_rate_2019.csv"
+dataset3_total<-read.csv(dataset3, header = TRUE, stringsAsFactors = FALSE)
+head(dataset3_total)
+```
+#create another data frame include populations on every twenty years
+```{r}
+dt_sel <- select(dataset3_total, c(1,2,25,45))
+dt_sel
+```
+#combine all of the years into one column and the number of people into another.
+```{r}
+#This is the point where I combine all of the years into one column and the number of people into another. 
+names(dt_sel)
+dt_sel_tidy <- dt_sel %>% gather("Year_month", "Population", 3:4)
+dt_sel_tidy %>% arrange(Country.Name,Year_month,Population) 
+head(dt_sel_tidy)
+```
+
+```{r}
+country_list <- dt_sel_tidy %>% 
+  arrange(Population) %>% 
+  select(Country.Name)
+country_list  = country_list[1:10,]
+country_list  
+dt_sel_tidy10<- dt_sel_tidy %>%  filter(Country.Name %in% country_list)
+head(dt_sel_tidy10,3)
+```
+#Analysis: 
+```{r}
+ggplot(dt_sel_tidy10, aes(x = Year_month , y = as.numeric(Population), group = Country.Name, colour = Country.Name)) +
+  geom_line() +
+  geom_point() +
+  theme_bw() +
+  ylab("Polulation") +
+  xlab("Year_month") +
+  ggtitle("Countries with highest number of deaths of children under five") +
+  ylab("Population") +
+  theme(plot.title = element_text(lineheight = .8))
