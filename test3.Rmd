@@ -1,0 +1,115 @@
+---
+title: "Project 2 dataset2"
+output: html_document
+---
+## INTRODUCTION
+####  Dataset: EIA Energy Information on Renewable Energy Consumption by Source, January 2013 to August 2017.
+#### Units of raw data are quadrillion BTU.
+
+## SET-UP
+#### Load required libraries.
+```{r}
+library(knitr)
+library(tibble)
+library(ggplot2)
+```
+
+#RAW DATA
+#Load dataset2 file into R Studio, name the columns, and scan the first two rows to combine the two row header into one column name.
+```{r}
+dataset2 <- read.csv("https://raw.githubusercontent.com/Zchen116/assignment-2/master/renew%20energy2.csv", skip = 1, header = FALSE)
+names(dataset2)[1] <- "Sector_and_Source"
+names(dataset2)[2] <- "1989"
+names(dataset2)[3] <- "1990"
+names(dataset2)[4] <- "1991"
+names(dataset2)[5] <- "1992"
+names(dataset2)[6] <- "1993"
+names(dataset2)[7] <- "1994"
+names(dataset2)[8] <- "1995"
+names(dataset2)[9] <- "1996"
+names(dataset2)[10] <- "1997"
+names(dataset2)[11] <- "1998"
+names(dataset2)[12] <- "1999"
+names(dataset2)[13] <- "2000"
+names(dataset2)[14] <- "2001"
+names(dataset2)[15] <- "2002"
+names(dataset2)[16] <- "2003"
+names(dataset2)[17] <- "2004"
+names(dataset2)[18] <- "2005"
+names(dataset2)[19] <- "2006"
+names(dataset2)[20] <- "2007"
+names(dataset2)[21] <- "2008"
+head(dataset2)
+```
+
+```{r}
+header_rows <- read.csv("https://raw.githubusercontent.com/Zchen116/assignment-2/master/renew%20energy2.csv", nrows=2, header=FALSE)
+new_header <- sapply(header_rows, paste, collapse="_")
+names(dataset2) <- new_header
+dataset2[-2:-10,1:3]
+```
+
+#SUBSET DATA
+#Create a datasubset with only the Residential Consumption of Renewable Energy rows 11 through 14 from 1989 to 2008.
+#Replace the first row of the new table with the first row of the raw table to retain the months designation.
+```{r}
+dataset2[,1]
+renewable_res <- dataset2[11:14,]
+head(renewable_res)
+```
+
+#Build vectors from the raw data so it will be easier to manipulate
+#Convert the units because Quadrillion BTU ("Quads") is not commonly used, instead use Giga-Watthours ("GWh")
+#Conversion factor: 1 Quad = 293,071.07 GWh
+#Round the numbers for ease of viewing
+```{r}
+Time <- c(new_header)
+Geothermal <- round(mapply(`*`, as.numeric(c(renewable_res[1,])), 293071.07), digits = 1)
+Solar <- round(mapply(`*`, as.numeric(c(renewable_res[2,])), 293071.07), digits = 1)
+Biomass <- round(mapply(`*`, as.numeric(c(renewable_res[3,])) , 293071.07), digits = 1)
+Total <- round(mapply(`*`, as.numeric(c(renewable_res[4,])), 293071.07), digits = 1)
+```
+
+#Create a dataframe from the original data making the rows vectors
+```{r}
+new_data <- data.frame(Time, Geothermal, Solar, Biomass, Total)
+head(new_data)
+```
+
+#Remove the first row because this is not valid information as part of the datasubset
+```{r}
+new_data <- new_data[-1,]
+head(new_data)
+```
+
+#Analysis
+#Plot the data to visualize the change in renewable energy consumption in the residential sector and to determine if one technology is contributing more than others to thte overall trends.
+#Plot the total renewable energy consumed in the residential sector using blue.
+```{r}
+ggplot(data=new_data, aes(x=Time, y=Total, group=1)) +
+  geom_line(color="#0066ff", size=1) +
+  geom_point(color="#0066ff", size=2) +
+  scale_x_discrete(breaks=c("2013","2014","2015","2016","2017","2018")) +
+  ggtitle("Monthly Consumption of Total Renewable Energy in GWh for Residential Sector") +
+  labs(x="January 2013 to August 2018", y="Consumption in GWh") +
+  theme(axis.title.y = element_text(size=12, color="#666666")) +
+  theme(axis.text = element_text(size=12, family="Trebuchet MS")) +
+  theme(plot.title = element_text(size=12, family="Trebuchet MS", face="bold", hjust=0, color="#666666"))
+```
+
+#Plot the solar component of the renewable energy consumed in the residential sector using red.
+```{r}
+ggplot(data=new_data, aes(x=Time, y=Solar, group=1)) +
+  geom_line(color="#aa0022", size=1) +
+  geom_point(color="#aa0022", size=2) +
+  scale_x_discrete(breaks=c("2013","2014","2015","2016","2017","2018")) +
+  ggtitle("Monthly Consumption of Solar Energy in GWh for Residential Sector") +
+  labs(x="January 2013 to August 2018", y="Consumption in GWh") +
+  theme(axis.title.y = element_text(size=12, color="#666666")) +
+  theme(axis.text = element_text(size=12, family="Trebuchet MS")) +
+  theme(plot.title = element_text(size=12, family="Trebuchet MS", face="bold", hjust=0, color="#666666"))
+```
+
+#Conclusion
+#These two graphs show that monthly renewable energy consumed by the residential sector has been volatile up and down from January 2013 to August 2018. However, the monthly consumption of solar has been a little bit down on the second graph.
+
