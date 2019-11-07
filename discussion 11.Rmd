@@ -1,0 +1,40 @@
+---
+title: "The Seasonal Food Guide"
+output: html_document
+---
+
+#The seasonal Food Guide is a free mobile app and website that serves as a "catalog of food". Users can learn when and where locally grown food is in season. Over 140 kinds of vegetables and Fruits can not only be found by just fingertips, but also be given recipes and background information on the food.
+
+# 1) Who are your target users?
+
+#Restaurant and whole food consumers can be the target users
+
+#2) What are their key goals?
+
+#Restaurant may want to get inspiration and help to create new style dishes to attract more customers by seasonal food.
+
+#Whole food consumers may want to purchase seasonal food because seasonal food can be fresher, tastier, and more nutritious than food consumed out of season.
+
+#3) How can you help them accomplish their goals?
+
+#The best way to help them is to understand what's the benefit:
+
+#a, Take its advantage as your farmer's market cheat sheet, then you can buy fresher and cheaper food when the season is coming
+
+#b, Take its advantage as your recipe, then you don't need to worry about what should be cooked
+
+#c, Take its advantage as your alarm, then you won't miss your favorite seasonal food again.
+
+#4) Features:
+
+#a, Comprehensive data on more than 140 types of fruits, veggies, legumes, nuts and herbs.
+
+#b, Search what's in season at any time of year in each of the 50 states.
+
+#c, Data sources: the Natural Resources Defense Council, USDA, state agriculture extension offices and state departments of agriculture.
+
+#d, Seasonality data accurate to half-month increments.
+
+#5) Reverse Engineering
+
+#Based on the number of benefits described above, it would be hard to reverse engineer the system. However, anything is possible with the right amount and quality of data.
